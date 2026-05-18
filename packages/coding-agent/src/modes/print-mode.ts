@@ -51,13 +51,18 @@ export async function runPrintMode(session: AgentSession, options: PrintModeOpti
 				return { cancelled: result.cancelled };
 			},
 			navigateTree: async (targetId, options) => {
-				const result = await session.navigateTree(targetId, {
-					summarize: options?.summarize,
-					customInstructions: options?.customInstructions,
-					replaceInstructions: options?.replaceInstructions,
-					label: options?.label,
-				});
-				return { cancelled: result.cancelled };
+				try {
+					const result = await session.navigateTree(targetId, {
+						summarize: options?.summarize,
+						customInstructions: options?.customInstructions,
+						replaceInstructions: options?.replaceInstructions,
+						label: options?.label,
+					});
+					return { cancelled: result.cancelled };
+				} catch (error) {
+					console.error(error instanceof Error ? error.message : String(error));
+					return { cancelled: true };
+				}
 			},
 			switchSession: async (sessionPath) => {
 				const success = await session.switchSession(sessionPath);
